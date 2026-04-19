@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soecode.lyf.dao.BookInfoMapper">
+
+    <resultMap id="BookInfoResultMap" type="com.soecode.lyf.entity.BookInfo">
+        <id     property="id"          column="ID"/>
+        <result property="name"        column="NAME"/>
+        <result property="author"      column="AUTHOR"/>
+        <result property="price"       column="PRICE"/>
+        <result property="publishDate" column="PUBLISH_DATE"/>
+    </resultMap>
+
+    <!-- 新增：主键由 Oracle sequence 生成 -->
+    <insert id="insert" parameterType="com.soecode.lyf.entity.BookInfo">
+        INSERT INTO book (id, name, author, price, publish_date)
+        VALUES (seq_book_id.NEXTVAL, #{name}, #{author}, #{price}, #{publishDate})
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="com.soecode.lyf.entity.BookInfo">
+        UPDATE book
+        SET name         = #{name},
+            author       = #{author},
+            price        = #{price},
+            publish_date = #{publishDate}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM book WHERE id = #{id}
+    </delete>
+
+    <!-- 按 ID 查询 -->
+    <select id="selectById" parameterType="long" resultMap="BookInfoResultMap">
+        SELECT id, name, author, price, publish_date
+        FROM book
+        WHERE id = #{id}
+    </select>
+
+    <!-- 查询所有（不分页） -->
+    <select id="selectAll" resultMap="BookInfoResultMap">
+        SELECT id, name, author, price, publish_date
+        FROM book
+        ORDER BY id DESC
+    </select>
+
+    <!-- 按书名模糊查询（不分页） -->
+    <select id="selectByNameLike" parameterType="string" resultMap="BookInfoResultMap">
+        SELECT id, name, author, price, publish_date
+        FROM book
+        WHERE name LIKE '%' || #{name} || '%'
+        ORDER BY id DESC
+    </select>
+
+    <!-- 分页总数（Oracle 11g，支持可选书名模糊过滤） -->
+    <select id="selectCount" resultType="long">
+        SELECT COUNT(1)
+        FROM book
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE '%' || #{name} || '%'
+            </if>
+        </where>
+    </select>
+
+    <!--
+        分页列表（Oracle XE 11g ROWNUM 二层分页写法）
+        startRow = (pageNo-1)*pageSize + 1
+        endRow   = pageNo * pageSize
+    -->
+    <select id="selectPage" resultMap="BookInfoResultMap">
+        SELECT id, name, author, price, publish_date
+        FROM (
+            SELECT t.*, ROWNUM rn
+            FROM (
+                SELECT id, name, author, price, publish_date
+                FROM book
+                <where>
+                    <if test="name != null and name != ''">
+                        AND name LIKE '%' || #{name} || '%'
+                    </if>
+                </where>
+                ORDER BY id DESC
+            ) t
+            WHERE ROWNUM &lt;= #{endRow}
+        )
+        WHERE rn &gt;= #{startRow}
+    </select>
+
+</mapper>
