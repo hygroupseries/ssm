@@ -7,45 +7,52 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ssm Maven Webapp</name>
 	<url>http://github.com/liyifeng1994/ssm</url>
+
+	<properties>
+		<maven.compiler.release>17</maven.compiler.release>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<spring.version>5.3.27</spring.version>
+	</properties>
+
 	<dependencies>
 		<!-- 单元测试 -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>4.13.2</version>
 		</dependency>
 
 		<!-- 1.日志 -->
-		<!-- 实现slf4j接口并整合 -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.1.1</version>
+			<version>1.2.13</version>
 		</dependency>
 
-		<!-- 2.数据库 -->
+		<!-- 2.数据库：Oracle JDBC (替换 MySQL) -->
+		<!-- Oracle JDBC 驱动，支持 Java 11+（含 Java 17），可连接 Oracle XE 11g -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.37</version>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc11</artifactId>
+			<version>21.7.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>c3p0</groupId>
+			<groupId>com.mchange</groupId>
 			<artifactId>c3p0</artifactId>
-			<version>0.9.1.2</version>
+			<version>0.9.5.5</version>
 		</dependency>
 
 		<!-- DAO: MyBatis -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
-			<version>3.3.0</version>
+			<version>3.5.13</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis-spring</artifactId>
-			<version>1.2.3</version>
+			<version>2.1.0</version>
 		</dependency>
 
 		<!-- 3.Servlet web -->
@@ -62,65 +69,66 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.5.4</version>
+			<version>2.15.2</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
+			<scope>provided</scope>
 		</dependency>
 
-		<!-- 4.Spring -->
+		<!-- 4.Spring 5.3.x（兼容 Java 17） -->
 		<!-- 1)Spring核心 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<!-- 2)Spring DAO层 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<!-- 3)Spring web -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<!-- 4)Spring test -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>4.1.7.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 
 		<!-- redis客户端:Jedis -->
 		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
-			<version>2.7.3</version>
+			<version>4.4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.dyuproject.protostuff</groupId>
@@ -137,10 +145,27 @@
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>3.2</version>
+			<version>3.2.2</version>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<finalName>ssm</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<release>17</release>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.4.0</version>
+			</plugin>
+		</plugins>
 	</build>
 </project>
